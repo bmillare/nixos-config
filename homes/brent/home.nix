@@ -1,6 +1,9 @@
 { pkgs, ... }:
 
 {
+  virtualisation.docker.enable = true;
+  users.users.brent.extraGroups = [ "docker" ];
+
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
@@ -11,6 +14,7 @@
 
     home.packages = [
        pkgs.llama-cpp
+       pkgs.docker-compose
     ];
 
     programs.home-manager.enable = true;
