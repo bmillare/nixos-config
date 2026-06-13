@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   home-manager.useGlobalPkgs = true;
@@ -9,9 +9,13 @@
     home.homeDirectory = "/home/brent";
     home.stateVersion = "26.05";
 
-    programs.home-manager.enable = true;
+    home.packages = [
+       pkgs.llama-cpp
+    ];
 
+    programs.home-manager.enable = true;
     programs.bash.enable = true;
+    programs.firefox.enable = true;
 
     programs.git = {
       enable = true;
