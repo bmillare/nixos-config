@@ -10,6 +10,7 @@
 
   networking.hostName = "crayfish";
   networking.networkmanager.enable = true;
+  networking.dhcpcd.extraConfig = "crayfish";
 
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -90,5 +91,6 @@
     curl
     ripgrep
     sbctl
+    ghostty.terminfo
   ];
 }
