@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   #virtualisation.docker.enable = true;
@@ -30,7 +30,7 @@
   # };
   users.users.brent.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDzv9piBq1YBoem21fGSuNUQO9JfbpOusARoSyojJ6wH brent@psynk.ai"
-    ];
+  ];
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -41,9 +41,20 @@
     home.stateVersion = "26.05";
 
     home.packages = [
-       pkgs.llama-cpp
-       pkgs.docker-compose
+      inputs.codex-cli-nix.packages.${pkgs.system}.default
+      pkgs.azure-cli
+      pkgs.docker-compose
+      pkgs.llama-cpp
+      pkgs.silver-searcher
     ];
+
+    programs.direnv = {
+      enable = true;
+      enableBashIntegration = true;
+      nix-direnv = {
+        enable = true;
+      };
+    };
 
     programs.ssh = {
       enable = true;
@@ -62,6 +73,19 @@
         IdentityFile = "~/.ssh/id_ed25519";
         IdentitiesOnly = true;
       };
+      settings."octavian" = {
+        HostName = "www.breakds.org";
+        User = "brent";
+        IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
+        IdentitiesOnly = true;
+      };
+      settings."lorian" = {
+        HostName = "lorian.local";
+        User = "brent";
+        ProxyJump = "octavian";
+        IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
+        IdentitiesOnly = true;
+      };
     };
 
     programs.git = {
@@ -78,6 +102,11 @@
     programs.tmux = {
       enable = true;
     };
-
   };
+
+  nix.settings = {
+    substituters = [ "https://codex-cli.cachix.org" ];
+    trusted-public-keys = [ "codex-cli.cachix.org-1:1Br3H1hHoRYG22n//cGKJOk3cQXgYobUel6O8DgSing=" ];
+  };
+  
 }
