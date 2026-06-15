@@ -10,7 +10,17 @@
 
   networking.hostName = "crayfish";
   networking.networkmanager.enable = true;
-  networking.dhcpcd.extraConfig = "crayfish";
+  networking.firewall.allowedUDPPorts = [ 5353 ];
+  # You need this to broadcast your hostname to local network
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true; # Enables IPv4 mDNS resolution
+    publish = {
+      enable = true;
+      addresses = true;
+      workstation = true;
+    };
+  };
 
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
