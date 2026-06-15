@@ -10,7 +10,12 @@
 
   networking.hostName = "crayfish";
   networking.networkmanager.enable = true;
-  networking.firewall.allowedUDPPorts = [ 5353 ];
+  networking.firewall.allowedUDPPorts = [
+    5353
+  ];
+  networking.firewall.allowedTCPPorts = [
+    8080
+  ];
   # You need this to broadcast your hostname to local network
   services.avahi = {
     enable = true;
