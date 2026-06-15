@@ -51,6 +51,19 @@
   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
 
+  # Raise the iGPU GTT (unified-memory) ceiling for large local LLMs.
+  # The Radeon 8060S maps model weights + KV cache through GTT; the kernel
+  # default ttm.pages_limit is ~half of RAM (~31 GiB on this 64 GB box),
+  # which is too small for a ~30 GiB Q8 model + 30k-context KV (~37 GiB total).
+  # Bump the ceiling to 48 GiB (12582912 * 4 KiB pages), leaving 16 GiB for the
+  # OS. It is a ceiling, not a reservation — only what the GPU actually
+  # allocates is used. amdgpu.gttsize (MiB) is set to match.
+  boot.kernelParams = [
+    "ttm.pages_limit=12582912"
+    "ttm.page_pool_size=12582912"
+    "amdgpu.gttsize=49152"
+  ];
+
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.lanzaboote = {
