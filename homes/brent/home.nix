@@ -44,7 +44,9 @@
       inputs.codex-cli-nix.packages.${pkgs.system}.default
       inputs.claude-code.packages.${pkgs.system}.default
       pkgs.azure-cli
+      pkgs.chromium
       pkgs.docker-compose
+      pkgs.jq
       pkgs.llama-cpp
       pkgs.silver-searcher
     ];
