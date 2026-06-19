@@ -31,13 +31,13 @@
       };
 
       homeConfigurations."bmillare@blacksheep" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
 
         # Pass inputs to modules just like specialArgs in nixosSystem
         extraSpecialArgs = { inherit inputs; };
 
         modules = [
-          ./hosts/arch/home.nix
+          ./hosts/blacksheep/home.nix
         ];
       };
 
