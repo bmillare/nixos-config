@@ -29,5 +29,17 @@
           nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
         ];
       };
+
+      homeConfigurations."bmillare@blacksheep" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        # Pass inputs to modules just like specialArgs in nixosSystem
+        extraSpecialArgs = { inherit inputs; };
+
+        modules = [
+          ./hosts/arch/home.nix
+        ];
+      };
+
     };
 }
