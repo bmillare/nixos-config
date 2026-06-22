@@ -79,6 +79,59 @@
   services.openssh.enable = true;
   services.fwupd.enable = true;
 
+  # SMB share of ~/projects for native access from macOS Finder/apps.
+  # Set the Samba password once after rebuild: `sudo smbpasswd -a brent`
+  # (Samba keeps its own password DB, separate from the system login.)
+  services.samba = {
+    enable = true;
+    openFirewall = true; # opens TCP 445/139 and UDP 137/138
+    settings = {
+      global = {
+        "server string" = "crayfish";
+        "netbios name" = "crayfish";
+        security = "user";
+        "min protocol" = "SMB2";
+        # macOS interop: route Apple metadata into xattr streams instead of
+        # AppleDouble sidecar files, and handle illegal NTFS chars cleanly.
+        "vfs objects" = "catia fruit streams_xattr";
+        "fruit:metadata" = "stream";
+        "fruit:nfs_aces" = "no";
+      };
+      projects = {
+        path = "/home/brent/projects";
+        browseable = "yes";
+        writable = "yes";
+        "valid users" = "brent";
+        "force user" = "brent";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "follow symlinks" = "yes"; # links within the share resolve
+        # Keep macOS junk off the server side.
+        "veto files" = "/.DS_Store/._*/.AppleDouble/.AppleDesktop/Network Trash Folder/";
+        "delete veto files" = "yes";
+      };
+    };
+  };
+
+  # Advertise SMB over the mDNS stack already enabled below, so crayfish
+  # appears under "Network" in Finder without typing an address.
+  services.avahi.extraServiceFiles.smb = ''
+    <?xml version="1.0" standalone='no'?>
+    <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+    <service-group>
+      <name replace-wildcards="yes">%h</name>
+      <service>
+        <type>_smb._tcp</type>
+        <port>445</port>
+      </service>
+      <service>
+        <type>_device-info._tcp</type>
+        <port>0</port>
+        <txt-record>model=RackMac</txt-record>
+      </service>
+    </service-group>
+  '';
+
   services.displayManager.gdm.enable = false;
   programs.niri.enable = true;
 
