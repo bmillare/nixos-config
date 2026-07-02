@@ -79,6 +79,14 @@
   services.openssh.enable = true;
   services.fwupd.enable = true;
 
+  # Tailscale mesh VPN. `openFirewall` opens the UDP port for direct
+  # (non-relayed) connections. After the first rebuild, authenticate with
+  # `sudo tailscale up`.
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   # SMB share of ~/projects for native access from macOS Finder/apps.
   # Set the Samba password once after rebuild: `sudo smbpasswd -a brent`
   # (Samba keeps its own password DB, separate from the system login.)
