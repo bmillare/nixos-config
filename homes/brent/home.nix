@@ -98,6 +98,17 @@
       };
     };
 
+    programs.gh = {
+      enable = true;
+      settings = {
+        # Your remotes use SSH (see programs.ssh above), so prefer SSH for
+        # any repo operations gh performs (clone, gh repo create, etc.).
+        git_protocol = "ssh";
+      };
+      # Let gh serve as the git credential helper for HTTPS GitHub remotes.
+      gitCredentialHelper.enable = true;
+    };
+
     programs.home-manager.enable = true;
     programs.bash.enable = true;
     programs.firefox.enable = true;
