@@ -89,6 +89,22 @@
         IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
         IdentitiesOnly = true;
       };
+      # Psynk deployment fleet (cradle1, cradle2, freshpath/trial1, pilot1,
+      # demo*, brand1). They all authorize this key via psynk-it
+      # nix/data/keys/brent.pub, but without a match block ssh never offers it
+      # and falls back to the personal id_ed25519 → "Permission denied
+      # (publickey)". Wildcarded so a new host needs no edit here.
+      #
+      # `User` is only a default: an explicit `root@host` or
+      # `--target-host brent@host` still wins. Root login is refused on these
+      # boxes, so deploys go through brent + passwordless sudo:
+      #   nixos-rebuild switch --flake .#cradle2 \
+      #     --target-host brent@cradle2.psynk.ai --use-remote-sudo
+      settings."*.psynk.ai" = {
+        User = "brent";
+        IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
+        IdentitiesOnly = true;
+      };
     };
 
     programs.git = {
