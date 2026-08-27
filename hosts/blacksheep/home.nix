@@ -15,6 +15,7 @@
   # You can install packages specifically for Arch here
   home.packages = with pkgs; [
     inputs.claude-code.packages.${pkgs.system}.default
+    inputs.codex-cli-nix.packages.${pkgs.system}.default
     ripgrep
   ];
 
