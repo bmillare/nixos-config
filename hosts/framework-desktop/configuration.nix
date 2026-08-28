@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../homes/brent/home.nix
+    ./staging-lanes.nix
   ];
 
   system.stateVersion = "26.05";
