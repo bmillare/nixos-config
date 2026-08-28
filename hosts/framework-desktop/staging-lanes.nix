@@ -72,6 +72,34 @@ let
   hostVeth = n: "${laneName n}-h";
   laneUnit = n: "psynk-${laneName n}.service";
 
+  # Runs inside the lane's namespaces, still as root, and is the last thing to
+  # hold privilege before the caller's command starts.
+  #
+  # A network namespace does NOT isolate unix domain sockets: they live in the
+  # filesystem. psynker and opera both hardcode /tmp/psynk-bifrost with no env
+  # override (psynker/bifrost/bifrost.py:19, opera src/bifrost/mod.rs:45-47), so
+  # a second stack dies at boot with "Bifrost socket already has a live
+  # listener" no matter how many lanes exist. Found by running a real stack in
+  # lane 3 while another workspace had one up on the host.
+  #
+  # `ip netns exec` has already unshared the mount namespace (that is how it
+  # swaps in the lane's resolv.conf) and made / rslave, so this bind is private
+  # to the lane and invisible to the host and to every other lane. Fixing it
+  # here rather than in the product keeps the "lanes need no product changes"
+  # property, and covers any future fixed-path socket the same way.
+  laneMount = pkgs.writeShellScript "psynk-lane-mount" ''
+    set -euo pipefail
+    lane="$1"; uid="$2"; gid="$3"; shift 3
+
+    priv="/run/psynk-lanes/$lane/bifrost"
+    ${pkgs.coreutils}/bin/mkdir -p "$priv" /tmp/psynk-bifrost
+    ${pkgs.coreutils}/bin/chown "$uid:$gid" "$priv"
+    ${pkgs.util-linux}/bin/mount --bind "$priv" /tmp/psynk-bifrost
+
+    exec ${pkgs.util-linux}/bin/setpriv \
+      --reuid="$uid" --regid="$gid" --init-groups -- "$@"
+  '';
+
   # Entry point. Joins the lane's namespaces as root, then drops to the calling
   # user before exec'ing anything of theirs.
   #
@@ -120,9 +148,7 @@ let
     fi
 
     exec ${pkgs.iproute2}/bin/ip netns exec "$lane" \
-      ${pkgs.util-linux}/bin/setpriv \
-        --reuid="$SUDO_UID" --regid="$SUDO_GID" --init-groups \
-        -- "$@"
+      ${laneMount} "$lane" "$SUDO_UID" "$SUDO_GID" "$@"
   '';
 
   mkLaneService = n:
