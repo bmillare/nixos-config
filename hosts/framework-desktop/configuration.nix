@@ -9,6 +9,13 @@
 
   system.stateVersion = "26.05";
 
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 16 * 1024; # 16 GiB, expressed in MiB
+    }
+  ];
+
   networking.hostName = "crayfish";
   networking.networkmanager.enable = true;
   networking.firewall.allowedUDPPorts = [
