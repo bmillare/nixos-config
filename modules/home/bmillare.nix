@@ -12,6 +12,7 @@
       pkgs.curl
       pkgs.emacs
       pkgs.jq
+      pkgs.pdftk
       pkgs.ripgrep
       pkgs.vim
       pkgs.wget
