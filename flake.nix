@@ -30,6 +30,31 @@
         ];
       };
 
+      nixosConfigurations.dykestraw = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/dykestraw/configuration.nix
+          home-manager.nixosModules.home-manager
+          nixos-hardware.nixosModules.microsoft-surface-pro-intel
+        ];
+      };
+
+      # A Surface-aware live environment. It contains the dykestraw system
+      # closure so the final installation does not depend on compiling the
+      # patched kernel (or even on having working networking) on the tablet.
+      nixosConfigurations.dykestraw-installer = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs self; };
+        modules = [
+          ./hosts/dykestraw/installer.nix
+          nixos-hardware.nixosModules.microsoft-surface-pro-intel
+        ];
+      };
+
+      packages.x86_64-linux.dykestraw-installer =
+        self.nixosConfigurations.dykestraw-installer.config.system.build.isoImage;
+
       homeConfigurations."bmillare@blacksheep" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages."x86_64-linux";
 
