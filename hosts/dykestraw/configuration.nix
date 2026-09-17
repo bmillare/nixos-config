@@ -118,14 +118,8 @@
   environment.systemPackages = with pkgs; [
     alacritty
     brightnessctl
-    curl
-    emacs
     fuzzel
-    git
-    ripgrep
     swaylock
-    vim
     wev
-    wget
   ];
 }
