@@ -50,7 +50,6 @@
       pkgs.azure-cli
       pkgs.docker-compose
       pkgs.llama-cpp
-      pkgs.silver-searcher
     ];
 
   };

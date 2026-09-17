@@ -10,6 +10,7 @@
     pkgs.jq
     pkgs.pdftk
     pkgs.ripgrep
+    pkgs.silver-searcher
     pkgs.vim
     pkgs.wget
   ];
