@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./home.nix
+    ../../modules/nixos/development-caches.nix
   ];
 
   system.stateVersion = "26.05";
@@ -26,14 +27,6 @@
       # Deployments are built on crayfish and copied over SSH as bmillare.
       # Members of wheel already have full sudo access on this personal host.
       trusted-users = [ "root" "@wheel" ];
-      substituters = [
-        "https://codex-cli.cachix.org"
-        "https://claude-code.cachix.org"
-      ];
-      trusted-public-keys = [
-        "codex-cli.cachix.org-1:1Br3H1hHoRYG22n//cGKJOk3cQXgYobUel6O8DgSing="
-        "claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk="
-      ];
     };
     gc = {
       automatic = true;

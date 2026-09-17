@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/development-caches.nix
     ../../homes/brent/home.nix
     ./staging-lanes.nix
   ];
