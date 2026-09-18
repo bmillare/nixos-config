@@ -204,6 +204,7 @@ in
           ''spawn-at-startup "waybar"''
           ''Mod+D hotkey-overlay-title="Run an Application: fuzzel"''
           ''gaps 16''
+          "\n    touchpad {\n"
           "\n        natural-scroll\n"
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 4"
         ]
@@ -215,6 +216,7 @@ in
           ''// spawn-at-startup "waybar"''
           ''Mod+Space hotkey-overlay-title="Run an Application: fuzzel"''
           ''gaps 4''
+          "\n    touchpad {\n        // Slow touchpad scrolling to 15% of the default speed.\n        scroll-factor 0.15\n"
           "\n        // natural-scroll: disabled for the preferred Type Cover scroll direction.\n"
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 3"
         ]
