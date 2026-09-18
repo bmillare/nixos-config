@@ -62,6 +62,9 @@ in
     ];
 
     programs = {
+      # Use native Wayland windows in Niri without requiring Xwayland.
+      emacs.package = pkgs.emacs-pgtk;
+
       waybar = {
         enable = true;
         systemd.enable = true;
