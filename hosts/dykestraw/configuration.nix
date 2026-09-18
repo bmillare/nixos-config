@@ -111,8 +111,10 @@
   environment.systemPackages = with pkgs; [
     alacritty
     brightnessctl
+    foot
     fuzzel
     swaylock
+    unzip
     wev
   ];
 }

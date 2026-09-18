@@ -209,6 +209,7 @@ in
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 4"
           "// prefer-no-csd"
           "numlock\n"
+          ''Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }''
         ]
         [
           ''options "ctrl:swapcaps"''
@@ -223,6 +224,7 @@ in
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 3"
           "prefer-no-csd"
           "numlock\n        repeat-rate 30\n        repeat-delay 270\n"
+          ''Mod+T hotkey-overlay-title="Open a Terminal: foot" { spawn "foot"; }''
         ]
         (builtins.readFile "${pkgs.niri.src}/resources/default-config.kdl");
     };

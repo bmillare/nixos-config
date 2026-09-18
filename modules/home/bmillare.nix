@@ -20,5 +20,11 @@
       IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
       IdentitiesOnly = true;
     };
+    settings."blacksheep" = {
+      HostName = "blacksheep.local";
+      User = "bmillare";
+      IdentityFile = "~/.ssh/test_keypari1.pem";
+      IdentitiesOnly = true;
+    };
   };
 }

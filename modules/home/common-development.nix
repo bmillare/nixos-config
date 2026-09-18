@@ -11,6 +11,7 @@
   home.packages = [
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     inputs.claude-code.packages.${pkgs.system}.default
+    pkgs.btop
     pkgs.curl
     pkgs.jq
     pkgs.pdftk
