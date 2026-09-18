@@ -19,7 +19,10 @@ If Home Manager is not on the shell's PATH yet:
 ```
 
 The shared development applications are installed, with browsers left to macOS.
-The existing SSH configuration and Git configuration are retained during bootstrap.
+The existing SSH configuration is retained. Home Manager manages Git configuration,
+including the shared `bmillare` identity (Brent Millare, brent.millare@gmail.com).
+Back up an existing Git configuration before activation; carry over any local
+settings you still need. GitHub CLI credential-helper integration remains disabled.
 
 Home Manager runs Syncthing as a launchd user agent. The previous native app's
 start-at-login setting was already disabled; do not also launch that app. The

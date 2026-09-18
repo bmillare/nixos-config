@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./bmillare-git.nix
     ./common-development.nix
     ./common-ssh.nix
   ];

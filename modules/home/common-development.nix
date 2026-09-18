@@ -6,11 +6,12 @@
 }:
 
 {
+  imports = [ ./emacs.nix ];
+
   home.packages = [
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     inputs.claude-code.packages.${pkgs.system}.default
     pkgs.curl
-    pkgs.emacs
     pkgs.jq
     pkgs.pdftk
     pkgs.ripgrep

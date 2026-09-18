@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../modules/home/bmillare-git.nix
     ../../modules/home/common-development.nix
     ../../modules/home/personal-project-sync.nix
   ];
@@ -12,8 +13,7 @@
     stateVersion = "26.05";
   };
 
-  # Bootstrap without replacing the Mac's existing Git identity/configuration.
-  programs.git.enable = lib.mkForce false;
+  # Preserve the Mac's existing credential-helper setup.
   programs.gh.gitCredentialHelper.enable = lib.mkForce false;
   # Preserve the local tool PATH setup from the previous ~/.profile.
   programs.bash.profileExtra = ''
