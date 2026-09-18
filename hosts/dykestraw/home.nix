@@ -188,7 +188,7 @@ in
     };
 
     # Start from the default configuration shipped with this exact Niri
-    # package, changing only the launcher shortcut. This keeps new upstream
+    # package, customizing input, display, spacing, and startup. This keeps new upstream
     # defaults when Niri is upgraded without maintaining a copied config.
     xdg.configFile."niri/config.kdl" = {
       force = true;
@@ -200,6 +200,8 @@ in
           ''position x=1280 y=0''
           ''spawn-at-startup "waybar"''
           ''Mod+D hotkey-overlay-title="Run an Application: fuzzel"''
+          ''gaps 16''
+          "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 4"
         ]
         [
           ''options "ctrl:swapcaps"''
@@ -208,6 +210,8 @@ in
           ''// position x=1280 y=0''
           ''// spawn-at-startup "waybar"''
           ''Mod+Space hotkey-overlay-title="Run an Application: fuzzel"''
+          ''gaps 4''
+          "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 3"
         ]
         (builtins.readFile "${pkgs.niri.src}/resources/default-config.kdl");
     };
