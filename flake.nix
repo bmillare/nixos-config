@@ -66,5 +66,11 @@
         ];
       };
 
+      homeConfigurations."bmillare@macbook" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages."aarch64-darwin";
+        extraSpecialArgs = { inherit inputs; };
+        modules = [ ./hosts/macbook/home.nix ];
+      };
+
     };
 }

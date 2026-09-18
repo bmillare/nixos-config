@@ -58,6 +58,7 @@ in
   home-manager.users.bmillare = {
     imports = [
       ../../modules/home/bmillare.nix
+      ../../modules/home/personal-project-sync.nix
     ];
 
     programs = {
