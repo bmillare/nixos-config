@@ -89,6 +89,15 @@
     (user-error "No symbol at point")))
 (global-set-key (kbd "C-c s") #'bmillare-symbol-at-point)
 
+(defun insert-xml-tag-pair (tag-name)
+  "Insert an XML opening and closing tag pair for TAG-NAME at point."
+  (interactive "sTag name: ")
+  (insert (format "<%s>\n</%s>" tag-name tag-name))
+  (forward-line -1)
+  (end-of-line))
+
+(global-set-key (kbd "C-c x") #'insert-xml-tag-pair)
+
 (setq markdown-command "pandoc")
 (put 'downcase-region 'disabled nil)
 
