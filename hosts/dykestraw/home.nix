@@ -222,7 +222,7 @@ in
           "\n        // natural-scroll: disabled for the preferred Type Cover scroll direction.\n"
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 3"
           "prefer-no-csd"
-          "numlock\n        repeat-rate 35\n        repeat-delay 200\n"
+          "numlock\n        repeat-rate 30\n        repeat-delay 270\n"
         ]
         (builtins.readFile "${pkgs.niri.src}/resources/default-config.kdl");
     };
