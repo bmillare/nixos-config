@@ -207,6 +207,8 @@ in
           "\n    touchpad {\n"
           "\n        natural-scroll\n"
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 4"
+          "// prefer-no-csd"
+          "numlock\n"
         ]
         [
           ''options "ctrl:swapcaps"''
@@ -219,6 +221,8 @@ in
           "\n    touchpad {\n        // Slow touchpad scrolling to 15% of the default speed.\n        scroll-factor 0.15\n"
           "\n        // natural-scroll: disabled for the preferred Type Cover scroll direction.\n"
           "focus-ring {\n        // Uncomment this line to disable the focus ring.\n        // off\n\n        // How many logical pixels the ring extends out from the windows.\n        width 3"
+          "prefer-no-csd"
+          "numlock\n        repeat-rate 35\n        repeat-delay 200\n"
         ]
         (builtins.readFile "${pkgs.niri.src}/resources/default-config.kdl");
     };
