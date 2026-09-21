@@ -89,3 +89,34 @@ nixos-rebuild switch --flake .#dykestraw \
 
 Because the command runs on crayfish, the build happens there and the resulting
 closure is copied to dykestraw before activation.
+
+## Touch-only use in Niri
+
+Waybar has three touch controls on the left:
+
+- **Overview** toggles Niri's overview. Tap a window to select it, scroll with
+  one finger, or long-press a window to move it.
+- **Apps** opens fuzzel. Show the keyboard first if you want to type a search.
+- **Keyboard** starts wvkbd on the first tap and toggles its visibility on later
+  taps. Its own hide key also works; tap the Waybar button to bring it back.
+
+The keyboard is manual: focusing a text field or detaching the Type Cover does
+not automatically show it. It starts on demand and stops with the graphical
+session. This is a desktop-session setup; boot-time LUKS entry, console login,
+and swaylock unlocking still require a physical keyboard.
+
+The settings live in `hosts/dykestraw/home.nix`. The bar is 48 logical pixels
+high, and wvkbd uses a height of 240 in landscape and 300 in portrait. Changing
+these does not configure automatic screen rotation.
+
+Apply from dykestraw with `sudo nixos-rebuild switch --flake .#dykestraw` or use
+the remote rebuild command above. If the running bar has not refreshed, run
+`systemctl --user restart waybar.service`. To troubleshoot the keyboard:
+
+```console
+systemctl --user status wvkbd.service
+journalctl --user -u wvkbd.service -b
+```
+
+Upstream documentation: [wvkbd](https://github.com/jjsullivan5196/wvkbd) and
+[Niri overview](https://niri-wm.github.io/niri/Overview.html).

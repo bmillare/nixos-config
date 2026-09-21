@@ -1,6 +1,20 @@
 { inputs, pkgs, ... }:
 
 let
+  toggleDykestrawKeyboard = pkgs.writeShellScript "dykestraw-keyboard-toggle" ''
+    set -euo pipefail
+
+    # Serialize taps and let systemd own the single keyboard process. Use
+    # wvkbd's actual visibility toggle so its own hide key also works.
+    exec 9>"$XDG_RUNTIME_DIR/dykestraw-keyboard.lock"
+    ${pkgs.util-linux}/bin/flock 9
+    if ${pkgs.systemd}/bin/systemctl --user is-active --quiet wvkbd.service; then
+      ${pkgs.systemd}/bin/systemctl --user kill --kill-whom=main --signal=RTMIN wvkbd.service
+    else
+      ${pkgs.systemd}/bin/systemctl --user start wvkbd.service
+    fi
+  '';
+
   dykestrawWallpapers = [
     (pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/dharmx/walls/main/painting/a_painting_of_flowers_and_a_glass_of_wine.jpg";
@@ -55,11 +69,18 @@ in
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.bmillare = {
+  home-manager.users.bmillare = { config, ... }: let
+    personalTools = import ../../packages/personal-tools {
+      inherit pkgs;
+      emacs = config.programs.emacs.finalPackage;
+    };
+  in {
     imports = [
       ../../modules/home/bmillare.nix
       ../../modules/home/personal-project-sync.nix
     ];
+
+    home.packages = [ personalTools ];
 
     programs = {
       # Use native Wayland windows in Niri without requiring Xwayland.
@@ -72,10 +93,13 @@ in
         settings.mainBar = {
           layer = "top";
           position = "top";
-          height = 38;
+          height = 48;
           spacing = 10;
 
           modules-left = [
+            "custom/overview"
+            "custom/apps"
+            "custom/keyboard"
             "niri/workspaces"
             "niri/window"
           ];
@@ -88,13 +112,28 @@ in
             "tray"
           ];
 
+          "custom/overview" = {
+            format = "Overview";
+            tooltip-format = "Show or hide the window overview";
+            on-click = "${pkgs.niri}/bin/niri msg action toggle-overview";
+          };
+          "custom/apps" = {
+            format = "Apps";
+            tooltip-format = "Open the application launcher";
+            on-click = "${pkgs.fuzzel}/bin/fuzzel";
+          };
+          "custom/keyboard" = {
+            format = "Keyboard";
+            tooltip-format = "Show or hide the on-screen keyboard";
+            on-click = toString toggleDykestrawKeyboard;
+          };
           "niri/workspaces" = {
             format = "{value}";
             current-only = false;
           };
           "niri/window" = {
             format = "{title}";
-            max-length = 55;
+            max-length = 25;
             separate-outputs = true;
           };
           clock = {
@@ -155,6 +194,15 @@ in
             background: transparent;
           }
 
+          #custom-overview,
+          #custom-apps,
+          #custom-keyboard {
+            min-height: 48px;
+            padding: 0 12px;
+            color: #18181b;
+            background: #93c5fd;
+          }
+
           #workspaces button.active,
           #workspaces button.focused {
             color: #18181b;
@@ -210,6 +258,7 @@ in
           "// prefer-no-csd"
           "numlock\n"
           ''Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }''
+          "binds {"
         ]
         [
           ''options "ctrl:swapcaps"''
@@ -225,8 +274,27 @@ in
           "prefer-no-csd"
           "numlock\n        repeat-rate 30\n        repeat-delay 270\n"
           ''Mod+T hotkey-overlay-title="Open a Terminal: foot" { spawn "foot"; }''
+          ''binds {
+    Mod+Shift+Space repeat=false hotkey-overlay-title="Personal tools" { spawn "${personalTools}/bin/personal-tools"; }''
         ]
         (builtins.readFile "${pkgs.niri.src}/resources/default-config.kdl");
+    };
+
+    # Started on the first tap, then shown/hidden with SIGRTMIN. No automatic
+    # popup on text focus; the button remains available with a Type Cover too.
+    systemd.user.services.wvkbd = {
+      Unit = {
+        Description = "Dykestraw on-screen keyboard";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+        Requisite = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "exec";
+        ExecStart = "${pkgs.wvkbd}/bin/wvkbd-mobintl -H 300 -L 240";
+        Restart = "on-failure";
+        RestartSec = 1;
+      };
     };
 
     systemd.user.services.swaybg = {
