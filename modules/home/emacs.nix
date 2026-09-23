@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   programs.emacs = {
@@ -12,10 +12,19 @@
       markdown-mode
       nix-mode
       unfill
+      clojure-mode
+      paredit
+      (epkgs.trivialBuild {
+        pname = "port";
+        version = "0.3.0";
+        src = "${inputs.port}/lisp";
+      })
     ];
   };
 
-  home.packages = [ pkgs.ripgrep pkgs.pandoc ];
+  # The Clojure CLI includes its Java runtime; projects can override it in
+  # their development shell, or run a prepl independently of Emacs.
+  home.packages = [ pkgs.ripgrep pkgs.pandoc pkgs.clojure ];
 
   # Own the user init: HM's extraConfig becomes default.el and would run
   # after an existing init, mixing the old Helm setup with this one.

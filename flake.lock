@@ -233,6 +233,23 @@
         "type": "github"
       }
     },
+    "port": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779263657,
+        "narHash": "sha256-F8uNGSoSavexwm73wOqyvVmA3It7RMzU9aj3YbPTeYc=",
+        "owner": "clojure-emacs",
+        "repo": "port",
+        "rev": "aae954cc27b1608e98cadf11d62df5f2f6adb069",
+        "type": "github"
+      },
+      "original": {
+        "owner": "clojure-emacs",
+        "ref": "v0.3.0",
+        "repo": "port",
+        "type": "github"
+      }
+    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -263,7 +280,8 @@
         "home-manager": "home-manager",
         "lanzaboote": "lanzaboote",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": "nixpkgs_4",
+        "port": "port"
       }
     },
     "rust-overlay": {

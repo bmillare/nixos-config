@@ -6,6 +6,21 @@
 (require 'markdown-mode-autoloads)
 (require 'nix-mode-autoloads)
 (require 'unfill-autoloads)
+(require 'clojure-mode-autoloads)
+
+;; A streaming prepl for evaluation, with a separate connection for tooling.
+;; Nix supplies Port; opening a source buffer does not start a JVM.
+(require 'port)
+(add-hook 'clojure-mode-hook #'port-mode)
+
+;; Structural editing in Lisp source and scratch buffers.
+(require 'paredit)
+(dolist (hook '(clojure-mode-hook
+                emacs-lisp-mode-hook
+                lisp-interaction-mode-hook
+                lisp-mode-hook
+                scheme-mode-hook))
+  (add-hook hook #'enable-paredit-mode))
 
 ;; Editing and display preferences retained from the original dotemacs.
 (setq create-lockfiles nil
