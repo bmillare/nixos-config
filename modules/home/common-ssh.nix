@@ -53,29 +53,42 @@
     # users), and the 10.231.1.0/24 bridge is not routed on the LAN, so
     # cradle is the only way in.
     #
+    # Each block also matches its bare address: psynk-it's fleet tooling
+    # (scripts/psynk-fleet.sh, psynk-it#268) runs `ssh 10.231.1.x` with no
+    # user or key and leaves both to this file. slot2 is the inventory's
+    # coda1.
+    #
     # Kept as separate flat blocks on purpose. Collapsing them into a shared
     # "slot1 slot2 slot3" block plus per-host HostName overrides works only
     # because of ssh's first-value-wins ordering, and home-manager emits
     # these sorted by attribute name rather than declaration order. The flat
     # form is order-independent.
-    settings."slot1" = {
+    settings."slot1 10.231.1.2" = {
       HostName = "10.231.1.2";
       User = "root";
       ProxyJump = "cradle";
       IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
       IdentitiesOnly = true;
     };
-    settings."slot2" = {
+    settings."slot2 10.231.1.3" = {
       HostName = "10.231.1.3";
       User = "root";
       ProxyJump = "cradle";
       IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
       IdentitiesOnly = true;
     };
-    settings."slot3" = {
+    settings."slot3 10.231.1.4" = {
       HostName = "10.231.1.4";
       User = "root";
       ProxyJump = "cradle";
+      IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
+      IdentitiesOnly = true;
+    };
+    # Psynk staging host (outpatient.staging.psynk.ai), addressed by IP in
+    # psynk-it's fleet inventory. The version probe runs `nixos-container
+    # run outpatient`, which needs root; as brent it fails in nsenter.
+    settings."18.145.46.99" = {
+      User = "root";
       IdentityFile = "~/.ssh/brent_spynk_ai_ed25519_key";
       IdentitiesOnly = true;
     };
