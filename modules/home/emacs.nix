@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.emacs = {
@@ -13,17 +13,13 @@
       nix-mode
       unfill
       clojure-mode
+      inf-clojure
       paredit
-      (epkgs.trivialBuild {
-        pname = "port";
-        version = "0.3.0";
-        src = "${inputs.port}/lisp";
-      })
     ];
   };
 
   # The Clojure CLI includes its Java runtime; projects can override it in
-  # their development shell, or run a prepl independently of Emacs.
+  # their development shell, or run a socket REPL independently of Emacs.
   home.packages = [ pkgs.ripgrep pkgs.pandoc pkgs.clojure ];
 
   # Own the user init: HM's extraConfig becomes default.el and would run

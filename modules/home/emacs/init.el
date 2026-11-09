@@ -8,10 +8,10 @@
 (require 'unfill-autoloads)
 (require 'clojure-mode-autoloads)
 
-;; A streaming prepl for evaluation, with a separate connection for tooling.
-;; Nix supplies Port; opening a source buffer does not start a JVM.
-(require 'port)
-(add-hook 'clojure-mode-hook #'port-mode)
+;; A plain REPL: `M-x inf-clojure' starts one, `M-x inf-clojure-connect'
+;; attaches to a socket REPL. Opening a source buffer does not start a JVM.
+(require 'inf-clojure-autoloads)
+(add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
 ;; Structural editing in Lisp source and scratch buffers.
 (require 'paredit)
