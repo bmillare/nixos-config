@@ -19,7 +19,46 @@ If Home Manager is not on the shell's PATH yet:
 ```
 
 The shared development applications are installed, with browsers left to macOS.
-The existing SSH configuration is retained. Home Manager manages Git configuration,
+SSH aliases are managed by `modules/home/personal-ssh.nix`, shared with Dykestraw.
+Private keys remain outside Nix: `~/.ssh/id_ed25519` (personal),
+`~/.ssh/brent_spynk_ai_ed25519_key` (work), and `~/.ssh/test_keypari1.pem`
+(legacy hosts). On this Mac, the latter two are symlinks to the existing keys.
+`github.com` retains the shared work identity; `github.com_personal` uses the
+personal identity. Dykestraw uses its current LAN IP until stable DNS or a
+DHCP reservation is configured.
+
+The initial SSH migration applied only the generated SSH file. The subsequent
+Emacs migration activated the full Mac Home Manager configuration, which now
+owns `~/.ssh/config` and the Emacs startup files. To build an SSH-only update
+for inspection from this repository:
+
+```sh
+nix build --out-link "$HOME/.local/state/nix/ssh-config/current" \
+  'path:.#homeConfigurations."bmillare@macbook".config.home.file.".ssh/config".source'
+```
+
+Both personal clients use `macbook` and `dykestraw` aliases and exactly the
+same authorization list: `modules/ssh-keys/personal-authorized-keys`.
+This is the deduplicated union of their previous keys (four public keys).
+`personal-ssh.nix` installs it on both machines; Dykestraw also references the
+same list through NixOS `authorizedKeys.keyFiles`. Private keys stay outside Nix.
+
+Home Manager installs the shared authorization list as a regular mode-600 file
+using `personalAuthorizedKeys`, because sshd rejected the Nix-store symlink.
+To refresh only that file without activating unrelated Home Manager changes:
+
+```sh
+nix build --out-link "$HOME/.local/state/nix/ssh-config/authorized-keys" \
+  'path:.#homeConfigurations."bmillare@macbook".config.home.file.".ssh/authorized_keys.source".source'
+install -m 600 "$HOME/.local/state/nix/ssh-config/authorized-keys" "$HOME/.ssh/.authorized_keys.hm-new"
+mv -f "$HOME/.ssh/.authorized_keys.hm-new" "$HOME/.ssh/authorized_keys"
+```
+
+The original manual config is backed up as
+`~/.ssh/config.before-home-manager-20261109-092533`. Home Manager now manages both SSH and Emacs. The old Mac init is preserved
+in `modules/home/emacs/archived.el` and is not loaded. Restart Emacs after
+activation to pick up the shared configuration.
+ Home Manager manages Git configuration,
 including the shared `bmillare` identity (Brent Millare, brent.millare@gmail.com).
 Back up an existing Git configuration before activation; carry over any local
 settings you still need. GitHub CLI credential-helper integration remains disabled.
@@ -35,7 +74,8 @@ The projects folder is paired with dykestraw using the shared
 `modules/home/personal-project-sync.nix` module. After verifying the initial copy,
 both machines use Send & Receive: edits and deletions propagate in either
 direction. Received changes retain up to
-10 old file versions; this does not back up local edits or replace a backup.
+2 old file versions per file for at most 30 days, with hourly cleanup.
+This bounds count and age, not total bytes, and does not back up local edits.
 The obsolete FluffyRice peer is no longer configured. The old default `~/Sync`
 folder is no longer shared; its files are retained.
 
@@ -49,7 +89,10 @@ nixpkgs pin catches up. The shared folder disables `blockIndexing`: our LAN can
 transfer blocks much faster than the receiver's SQLite cross-file block search.
 Same-file block reuse and hash verification are retained. Filesystem watching
 and fsync remain enabled. Python environments with numbered names (such as
-`custom_venv1`) are excluded too; already copied ignored files are not deleted.
+`custom_venv1`) are excluded too. The verified generated directory
+`/llama_cpp/llama.cpp/build` is excluded explicitly; other build directories,
+source, documentation, and assets remain included. Already copied ignored
+files are not deleted.
 
 Before upgrading from 2.1.2, stopped-service database backups were taken at:
 

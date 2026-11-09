@@ -4,6 +4,7 @@
   imports = [
     ../../modules/home/bmillare-git.nix
     ../../modules/home/common-development.nix
+    ../../modules/home/personal-ssh.nix
     ../../modules/home/personal-project-sync.nix
   ];
 

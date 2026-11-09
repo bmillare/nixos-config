@@ -77,6 +77,7 @@ in
   in {
     imports = [
       ../../modules/home/bmillare.nix
+      ../../modules/home/personal-ssh.nix
       ../../modules/home/personal-project-sync.nix
     ];
 

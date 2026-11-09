@@ -40,9 +40,7 @@
     description = "Brent Millare";
     extraGroups = [ "networkmanager" "surface-control" "wheel" ];
     shell = pkgs.bashInteractive;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIc+wMxSoktmSGv9e7yEf0SQ2Qu7A9S9SX2jqh4V0z1a brent.millare@gmail.com"
-    ];
+    openssh.authorizedKeys.keyFiles = [ ../../modules/ssh-keys/personal-authorized-keys ];
   };
 
   security = {

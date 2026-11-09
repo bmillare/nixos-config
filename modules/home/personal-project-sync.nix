@@ -19,6 +19,8 @@ let
     *_venv
     *_venv[0-9]*
     .stignore.before-hm-*
+    // Verified generated CMake output; avoid a broad build/ exclusion.
+    /llama_cpp/llama.cpp/build
     // Models and the live Mac browser profile stay local
     *.gguf
     /startup/browser_control/tmp
@@ -71,7 +73,11 @@ in
         blockIndexing = false;
         versioning = {
           type = "simple";
-          params.keep = "10";
+          params = {
+            keep = "2";
+            cleanoutDays = "30";
+          };
+          cleanupIntervalS = 3600;
         };
       };
     };

@@ -1,8 +1,9 @@
 # Shared Emacs configuration
 
 `../emacs.nix` is imported by `common-development.nix`, so crayfish,
-dykestraw, blacksheep, and macbook share the same portable settings. There
-are no Mac-specific settings. Hosts can override `programs.emacs.package`
+dykestraw, blacksheep, and macbook share the same portable settings. macOS
+preserves Command as Meta with a guarded platform setting. Hosts can override
+`programs.emacs.package`
 if they need a different Emacs build.
 
 Nix supplies Emacs and its packages; `init.el` holds the editable source of
@@ -49,18 +50,32 @@ Preserved: black/gray85/red3 appearance, syntax colors, no backups or lock
 files, auto-save timeout, automatic reloading, spaces for indentation,
 four-column C indentation, truncated lines, hidden menu/tool bars, right
 scroll bar, column numbers, window movement keys, browser-at-point,
-date insertion, symbol copying, and the Emacs server for emacsclient.
+date insertion, symbol copying, XML tag insertion, and the Emacs server for emacsclient.
 Obsolete face/variable names were updated to their current equivalents.
 
 Kept packages: Magit, Markdown mode (with Pandoc), Nix mode, and unfill.
 Added: Vertico, Orderless, Marginalia, and Consult, plus built-in project,
 history, and recent-file support.
 
-Omitted: Helm, the old CIDER setup, vterm and terminal macros,
-custom process-send and temporary-file plumbing, Mac modifiers/renderer,
-WSL browser detection, UUID/XML helpers, and the custom kill-buffer command.
-The standard buffer-killing commands remain available. These optional
-workflows can be reintroduced selectively later.
+Retired from startup: Helm, CIDER/nREPL setup, vterm, the custom mdr renderer,
+terminal macros, custom process-send and temporary-file plumbing, WSL browser
+detection, UUID insertion, the backslash helper, and the custom kill-buffer
+command. Built-in terminal and buffer-killing commands remain available.
+
+`archived.el` preserves the complete pre-migration Mac init as reference,
+including the legacy helpers and their former keybindings. It is neither
+installed nor loaded. Do not load it wholesale: extract individual definitions
+when needed, review their dependencies, and deliberately choose new bindings.
+Some helpers assume `~/clj/src`, named terminal buffers, files under `/tmp`,
+or CIDER. The old backslash helper also needs its region/narrowing behavior
+reviewed before reuse.
+
+The shared configuration uses inf-clojure rather than CIDER and does not
+activate the old `~/.emacs.d/elpa` tree. Existing ELPA files are retained.
+The Mac keeps its native Emacs build; Dykestraw keeps PGTK for Wayland.
+Command maps to Meta on macOS when the build exposes a corresponding modifier
+variable; Option is left at its default. No desktop-wide key remapping is
+introduced. `custom.el` and `local.el` remain opt-in local overrides.
 
 ## Clojure over a plain REPL
 

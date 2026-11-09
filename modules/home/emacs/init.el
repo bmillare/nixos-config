@@ -22,6 +22,13 @@
                 scheme-mode-hook))
   (add-hook hook #'enable-paredit-mode))
 
+;; Preserve Command as Meta on native macOS builds. Terminal Emacs and
+;; Linux keep their own input handling; Option retains the build's default.
+(when (eq system-type 'darwin)
+  (dolist (modifier '(ns-command-modifier mac-command-modifier))
+    (when (boundp modifier)
+      (set modifier 'meta))))
+
 ;; Editing and display preferences retained from the original dotemacs.
 (setq create-lockfiles nil
       auto-save-timeout 2000
