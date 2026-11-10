@@ -7,6 +7,7 @@
 
 let
   ignoreFile = pkgs.writeText "projects.stignore" ''
+    ${builtins.readFile ./project-repositories.stignore}
     // Machine-specific environments and generated files
     .git
     .DS_Store

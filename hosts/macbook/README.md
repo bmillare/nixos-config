@@ -72,8 +72,8 @@ directory. Treat both directories as private.
 
 The projects folder is paired with dykestraw using the shared
 `modules/home/personal-project-sync.nix` module. After verifying the initial copy,
-both machines use Send & Receive: edits and deletions propagate in either
-direction. Received changes retain up to
+both machines use Send & Receive for non-repository files: edits and deletions
+propagate in either direction. Git working trees are excluded on both peers. Received changes retain up to
 2 old file versions per file for at most 30 days, with hourly cleanup.
 This bounds count and age, not total bytes, and does not back up local edits.
 The obsolete FluffyRice peer is no longer configured. The old default `~/Sync`
@@ -111,3 +111,47 @@ place and is excluded from sync, along with development environments, Git
 metadata and the known credentials directory. Review any additional secrets or
 machine-specific files before pairing. Syncthing's GUI is local-only at
 <http://127.0.0.1:8384>.
+
+## Git repositories and Syncthing
+
+`modules/home/project-repositories.stignore` lists existing Git working trees
+relative to `~/projects`. Home Manager installs these exclusions on both personal
+machines. Git metadata and working files stay local; use Git to transfer changes.
+The legacy repository rooted at `~/projects` is a special case: only its three
+tracked notes are excluded individually, so unrelated documents still sync.
+If that repository starts tracking more files, add those paths to the exclusions.
+
+The November 2026 migration restored missing `.git` directories on dykestraw from
+Mac metadata snapshots, including existing local-only history, refs, staged changes,
+and shallow-clone boundaries. Existing working files were preserved. Snapshots and
+validation records are under `~/.local/state/git-sync-migration-20261109` on each
+machine. These snapshots may contain private repository history; keep them local.
+
+For repositories with a hosted origin, commit and push on the machine where you
+edit, then pull on the other machine after checking its working tree is clean.
+Uncommitted edits and untracked files inside excluded repositories no longer follow
+you automatically. Commit files that you need on both machines.
+
+Local-only repositories have direct peer remotes: `dykestraw` on Mac and `macbook`
+on dykestraw. Until a bare-repository host is provisioned, commit on the source,
+then fetch and merge on the destination. For example, to bring Mac's `bm_tools`
+changes to dykestraw, after committing them on Mac:
+
+```sh
+cd ~/projects/bm_tools
+git status
+git fetch macbook
+git merge --ff-only macbook/master
+```
+
+Use the repository's actual branch name. Resolve local work or divergence before
+merging. Do not push directly into another machine's checked-out branch. No
+blacksheep hosting was provisioned by this migration.
+
+Prefer `~/repos` (outside Syncthing) for new clones and new repositories, cloning
+separately on each machine. If a new repository must live under `~/projects`, add
+its root-relative path to `project-repositories.stignore` and activate the ignore
+rules on BOTH machines before cloning or initializing it. Syncthing does not
+infer working-tree exclusions from the presence of a `.git` directory.
+Since `nixos-config` itself is now excluded, distribute configuration changes with
+Git and activate Home Manager independently on each machine.

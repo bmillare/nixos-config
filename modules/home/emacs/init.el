@@ -13,6 +13,19 @@
 (require 'inf-clojure-autoloads)
 (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
+;; Load personal tools directly from their working trees.  Editing their
+;; Elisp needs only eval-buffer/load-file, not a Home Manager rebuild.
+(require 'use-package)
+(use-package dj-clojure
+  :ensure nil
+  :if (file-readable-p
+       (expand-file-name "~/projects/ai_coding/dj_rebl/elisp/dj-clojure.el"))
+  :load-path "~/projects/ai_coding/dj_rebl/elisp"
+  :demand t
+  :config
+  (remove-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
+  (add-hook 'clojure-mode-hook #'dj-clojure-mode))
+
 ;; Structural editing in Lisp source and scratch buffers.
 (require 'paredit)
 (dolist (hook '(clojure-mode-hook

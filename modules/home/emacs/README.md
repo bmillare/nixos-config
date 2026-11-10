@@ -25,6 +25,52 @@ are outside Nix and can override the shared defaults. Review an existing
 `custom.el` if old settings unexpectedly return. Do not load the entire old
 dotemacs from `local.el`, since that would re-enable Helm and its old setup.
 
+## Developing personal tools without rebuilding Nix
+
+Keep Emacs and third-party dependencies in Nix, but load personal Elisp
+directly from its checkout. The shared init does this for
+`~/projects/ai_coding/dj_rebl/elisp/dj-clojure.el`: when present, it enables
+`dj-clojure-mode` instead of `inf-clojure-minor-mode`. When absent,
+inf-clojure remains the default. No connection starts automatically.
+
+Activate the shared init through Home Manager once. After that, edit the
+tool's `.el` file and use `M-x eval-buffer`, or `M-x load-file` to reload
+it. `require` alone does not reload an already loaded feature. Definitions
+using `defvar` retain their existing values on reload; evaluate a `setq`
+to change an existing setting, or restart Emacs for a fresh initialization.
+Use source files while developing; stale `.elc` files can affect loading.
+
+For a new tool, add a declaration to the writable `~/.emacs.d/local.el`
+and evaluate it. This registration also needs no Nix rebuild:
+
+```elisp
+(require 'use-package)
+(use-package my-tool
+  :ensure nil
+  :if (file-readable-p (expand-file-name "~/projects/my-tool/elisp/my-tool.el"))
+  :load-path "~/projects/my-tool/elisp"
+  :bind (("C-c m t" . my-tool-command)))
+```
+
+Replace the example names with the package's feature and command.
+`:ensure nil` keeps package installation out of this declaration, and the
+file guard lets machines without the checkout skip it. Add a `:config`
+section for tool-specific settings if needed. Move a declaration into the
+shared init when you want it available across machines; tool source still
+loads from the working tree. `local.el` itself is machine-local unless
+you separately sync it.
+
+With `dj-clojure`, use `M-x dj-clojure-connect` to connect to
+`localhost:5555`. Source-buffer keys are `C-c C-c` (top-level form),
+`C-c C-e` (preceding form), `C-c C-v` (documentation), `C-c C-r` (region),
+and `C-c C-z` (REPL). Set `dj-clojure-host` and `dj-clojure-port` in
+`local.el` if needed. Evaluation uses the REPL's current namespace;
+the separate REBL connection is independent.
+
+After evaluating the declaration in an existing Emacs session, disable
+`inf-clojure-minor-mode` and enable `dj-clojure-mode` in any already-open
+Clojure buffers. New buffers use the updated hook automatically.
+
 ## Navigation
 
 | Key | Action |
@@ -70,7 +116,8 @@ Some helpers assume `~/clj/src`, named terminal buffers, files under `/tmp`,
 or CIDER. The old backslash helper also needs its region/narrowing behavior
 reviewed before reuse.
 
-The shared configuration uses inf-clojure rather than CIDER and does not
+The shared configuration uses local dj-clojure when available, with
+inf-clojure as a fallback, and does not
 activate the old `~/.emacs.d/elpa` tree. Existing ELPA files are retained.
 The Mac keeps its native Emacs build; Dykestraw keeps PGTK for Wayland.
 Command maps to Meta on macOS when the build exposes a corresponding modifier
@@ -80,7 +127,8 @@ introduced. `custom.el` and `local.el` remain opt-in local overrides.
 ## Clojure over a plain REPL
 
 Nix installs `clojure-mode`, `inf-clojure`, and the Clojure CLI with its
-Java runtime. `inf-clojure-minor-mode` is enabled in Clojure buffers;
+Java runtime. Without the local dj-clojure checkout,
+`inf-clojure-minor-mode` is enabled in Clojure buffers;
 opening a file does not start a process. inf-clojure talks to an ordinary
 `clojure.main` REPL, either as a subprocess or over a socket REPL. There
 is no Eglot, language server, nREPL, prepl, or injected middleware.
